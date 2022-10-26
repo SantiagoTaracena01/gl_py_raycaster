@@ -8,7 +8,6 @@ Santiago Taracena Puga (20017)
 # Librerías importantes para el desarrollo del raycaster.
 import pygame
 from OpenGL.GL import *
-from sympy import evaluate
 
 # Colores necesarios para el raycaster.
 GREEN = (0.0, 1.0, 0.0, 1.0)
