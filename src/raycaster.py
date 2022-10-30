@@ -10,8 +10,8 @@ import pygame
 from OpenGL.GL import *
 
 # Colores necesarios para el raycaster.
-GREEN = (0.0, 1.0, 0.0, 1.0)
-RED = (1.0, 0.0, 0.0, 1.0)
+BG_COLOR = (1.0, 1.0, 1.0, 1.0)
+PIXEL_COLOR = (0.25, 0.5, 1.0, 1.0)
 
 # Inicialización de la librería pygame.
 pygame.init()
@@ -38,11 +38,11 @@ def pixel(x, y, color):
 while (running):
 
   # Limpieza inicial de la pantalla
-  glClearColor(*GREEN)
+  glClearColor(*BG_COLOR)
   glClear(GL_COLOR_BUFFER_BIT)
 
   # Creación de un pixel en la pantalla y movimiento de la misma.
-  pixel(x, 100, RED)
+  pixel(x, 100, PIXEL_COLOR)
   x += speed
 
   # Cambio de la velocidad del raycaster.
@@ -54,7 +54,7 @@ while (running):
   # Flip del framebuffer de pygame.
   pygame.display.flip()
 
-  # Posibilidad de cerrar la ventana creada por pygame.
+  # Posibilidad de cerrar la ventana creada por pygame. 
   for event in pygame.event.get():
     if (event.type == pygame.QUIT):
       running = False
