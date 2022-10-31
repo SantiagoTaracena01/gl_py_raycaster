@@ -1,1 +1,1 @@
-# gl_bmp_raycasting (Python)
+# gl_bmp_raycaster (Python)
