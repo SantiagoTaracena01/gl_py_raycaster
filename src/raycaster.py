@@ -6,50 +6,39 @@ Santiago Taracena Puga (20017)
 """
 
 # Librerías importantes para el desarrollo del raycaster.
-import pygame
 from OpenGL.GL import *
+import pygame
+import utils
+import colors
 
-# Colores necesarios para el raycaster.
-BG_COLOR = (1.0, 1.0, 1.0, 1.0)
-PIXEL_COLOR = (0.25, 0.5, 1.0, 1.0)
+# Medidas de la ventana del raycaster.
+WIDTH = 400
+HEIGHT = 300
 
 # Inicialización de la librería pygame.
 pygame.init()
 
 # Creación de la pantalla del juego.
-screen = pygame.display.set_mode((800, 600), pygame.OPENGL | pygame.DOUBLEBUF)
+screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.OPENGL | pygame.DOUBLEBUF)
+pygame.display.set_caption("Lab 3: Conway's Game Of Life")
 
-# Posición inicial de un pixel.
-x, y = 0, 0
+# Estado inicial del juego.
+state = utils.generate_initial_state(WIDTH, HEIGHT)
 
 # Estado de ejecución del raycaster y velocidad de los pixeles.
 running = True
 speed = 1
-
-# Función que dibuja un pixel con las tecnologías de OpenGL.
-def pixel(x, y, color):
-  glEnable(GL_SCISSOR_TEST)
-  glScissor(x, y, 10, 10)
-  glClearColor(*color)
-  glClear(GL_COLOR_BUFFER_BIT)
-  glDisable(GL_SCISSOR_TEST)
+x = 0
 
 # Ciclo de "vida" del raycaster.
 while (running):
 
-  # Limpieza inicial de la pantalla
-  glClearColor(*BG_COLOR)
+  # Limpieza inicial de la pantalla.
+  glClearColor(*colors.BG_COLOR)
   glClear(GL_COLOR_BUFFER_BIT)
 
-  # Creación de un pixel en la pantalla y movimiento de la misma.
-  pixel(x, 100, PIXEL_COLOR)
-  x += speed
-
-  # Cambio de la velocidad del raycaster.
-  if (x == 800):
-    speed = -1
-  elif (x == 0):
-    speed = 1
+  # Cambio de estado hacia un nuevo estado del juego.
+  state = utils.update_game_state(state, 10, (colors.BG_COLOR, colors.PIXEL_COLOR))
 
   # Flip del framebuffer de pygame.
   pygame.display.flip()
