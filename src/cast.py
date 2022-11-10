@@ -90,24 +90,38 @@ class Raycaster(object):
   # Función para lanzar un rayo en dirección del jugador.
   def cast_ray(self, a):
 
-    # Constantes importantes para el rayo.
+    # Constantes importantes para el lanzamiento del rayo.
     distance = 0
     ox = self.player["x"]
     oy = self.player["y"]
 
+    # Ciclo que simula el lanzamiento del rayo.
     while (True):
+
+      # Coordenadas de visión x e y.
       x = int((ox + (distance * math.cos(a))))
       y = int((oy + (distance * math.sin(a))))
+
+      # Factores i y j del hit.
       i, j = int((x / self.__blocksize)), int((y / self.__blocksize))
+
+      # Si el caracter no es vacío se dibuja una pared.
       if (self.__map[j][i] != " "):
+
+        # Hits en los ejes x e y.
         hitx = (x - (i * self.__blocksize))
         hity = (y - (j * self.__blocksize))
-        if (1 < hitx < (self.__blocksize - 1)):
-          maxhit = hitx
-        else:
-          maxhit = hity
-        tx = int(((maxhit * 128) / self.__blocksize))
-        return distance, self.__map[j][i], tx
+
+        # Definición de la distancia máxima del hit.
+        maxhit = hitx if (1 < hitx < (self.__blocksize - 1)) else hity
+
+        # Textura del bloque.
+        texture_x = int(((maxhit * 128) / self.__blocksize))
+
+        # Retorno de la distancia, la pared y su textura.
+        return distance, self.__map[j][i], texture_x
+
+      # Dibujo de un nuevo punto y aumento de la distancia.
       self.point(x, y)
       distance += 1
 
@@ -141,7 +155,7 @@ class Raycaster(object):
         ty = int((y - sprite_y) * 128 / sprite_size)
         c = enemy["sprite"].get_at((tx, ty))
         index = (x - 500)
-        if c != TRANSPARENT and x > 500 and index < len(self.__z_buffer) and self.__z_buffer[(x - 500)] >= d:
+        if c != TRANSPARENT and x > 500 and self.__z_buffer[(x - 500)] >= d:
           self.point(x, y, c)
           self.__z_buffer[x - 500] = d
 
