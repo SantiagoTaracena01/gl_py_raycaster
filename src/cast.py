@@ -8,12 +8,7 @@ Santiago Taracena Puga (20017)
 # Librerías necesarias para el desarrollo de la clase Raycaster.
 import pygame
 import math
-
-BLACK = (0, 0, 0)
-WHITE = (255, 255, 255)
-SKY = (0, 200, 250)
-GROUND = (200, 40, 40)
-TRANSPARENT = (152, 0, 136)
+import colors
 
 wall1 = pygame.image.load("./textures/wall1.png")
 wall2 = pygame.image.load("./textures/wall2.png")
@@ -55,7 +50,7 @@ class Raycaster(object):
     self.__z_buffer = [999_999 for _ in range(0, self.__width)]
 
   # Función para colocar un punto en la pantalla.
-  def point(self, x, y, color=WHITE):
+  def point(self, x, y, color=colors.WHITE):
     self.__screen.set_at((x, y), color)
 
   # Función que dibuja un bloque en la pantalla.
@@ -116,15 +111,16 @@ class Raycaster(object):
         maxhit = hitx if (1 < hitx < (self.__blocksize - 1)) else hity
 
         # Textura del bloque.
-        texture_x = int(((maxhit * 128) / self.__blocksize))
+        x_texture = int(((maxhit * 128) / self.__blocksize))
 
         # Retorno de la distancia, la pared y su textura.
-        return distance, self.__map[j][i], texture_x
+        return distance, self.__map[j][i], x_texture
 
       # Dibujo de un nuevo punto y aumento de la distancia.
       self.point(x, y)
       distance += 1
 
+  # Función que dibuja el mapa en la parte izquierda de la pantalla.
   def draw_map(self):
     for x in range(0, 500, self.__blocksize):
       for y in range(0, 500, self.__blocksize):
@@ -132,60 +128,74 @@ class Raycaster(object):
         if (self.__map[j][i] != " "):
           self.block(x, y, walls[(int(self.__map[j][i]) - 1)])
 
+  # Función que dibuja un punto en la posición del jugador en el mapa.
   def draw_player(self):
     self.point(self.player["x"], self.player["y"])
 
-  # Hasta acá todo nashi.
-
+  # Función para dibujar
   def draw_sprite(self, enemy):
-    sprite_a = math.atan2((enemy["y"] - self.player["y"]), (enemy["x"] - self.player["x"]))
-    d = ((((self.player["x"] - enemy["x"]) ** 2) + ((self.player["y"] - enemy["y"]) ** 2)) ** 0.5)
-    sprite_size = int(((500 / d) * (self.__height / 10)))
-    
-    sprite_x = int(
-      500 +
-      (sprite_a - self.player["direction"]) * 500 / self.player["field_of_view"]
-      + sprite_size / 2
-    )
+
+    # Dirección, distancia y tamaño del sprite.
+    sprite_direction = math.atan2((enemy["y"] - self.player["y"]), (enemy["x"] - self.player["x"]))
+    distance = ((((self.player["x"] - enemy["x"]) ** 2) + ((self.player["y"] - enemy["y"]) ** 2)) ** 0.5)
+    sprite_size = int(((500 / distance) * (self.__height / 10)))
+
+    # Coordenadas x e y del sprite.
+    sprite_x = int(500 + (sprite_direction - self.player["direction"]) * 500 / self.player["field_of_view"] + sprite_size / 2)
     sprite_y = int(((500 / 2) - (sprite_size / 2)))
 
+    # Iteración para dibujar los sprites en la pantalla.
     for x in range(sprite_x, sprite_x + sprite_size):
       for y in range(sprite_y, sprite_y + sprite_size):
-        tx = int((x - sprite_x) * 128 / sprite_size)
-        ty = int((y - sprite_y) * 128 / sprite_size)
-        c = enemy["sprite"].get_at((tx, ty))
-        index = (x - 500)
-        if c != TRANSPARENT and x > 500 and self.__z_buffer[(x - 500)] >= d:
-          self.point(x, y, c)
-          self.__z_buffer[x - 500] = d
 
+        # Texturas en x, y, y color del sprite.
+        x_texture = int((x - sprite_x) * 128 / sprite_size)
+        y_texture = int((y - sprite_y) * 128 / sprite_size)
+        color = enemy["sprite"].get_at((x_texture, y_texture))
+        index = (x - 500)
+
+        # Condiciones para dibujar un punto del sprite.
+        if (color != colors.TRANSPARENT) and (x > 500) and (index < len(self.__z_buffer)) and (self.__z_buffer[index] >= distance):
+          self.point(x, y, color)
+          self.__z_buffer[index] = distance
+
+  # Función para renderizar un frame del juego.
   def render(self):
+
+    # Funciones para renderizar los componentes de la ventana.
     self.draw_map()
     self.draw_player()
     density = 100
-    # minimap
+
+    # Dibujo del minimapa del juego.
     for i in range(0, density):
-      a = self.player["direction"] - self.player["field_of_view"] / 2 + self.player["field_of_view"] * i / density
-      distance, color, _ = self.cast_ray(a)
-      # draw in 3d
+      direction = self.player["direction"] - self.player["field_of_view"] / 2 + self.player["field_of_view"] * i / density
+      distance, color, _ = self.cast_ray(direction)
 
-    # for y in range(500):
-    #   for x in (499, 500, 501):
-    #     self.point(x, y)
+    # Línea divisoria entre el minimapa y el juego.
+    for y in range(500):
+      for x in (499, 500, 501):
+        self.point(x, y)
 
-    # draw in 3d
+    # Dibujo del mapa en 3D del juego.
     for i in range(0, int(self.__width / 2)):
-      a = self.player["direction"] - (self.player["field_of_view"] / 2) + self.player["field_of_view"] * i / int(self.__width / 2)
-      distance, color, tx = self.cast_ray(a)
+
+      # Ángulo de disparo del rayo, materiales y puntos para el dibujo de una línea.
+      direction = self.player["direction"] - (self.player["field_of_view"] / 2) + self.player["field_of_view"] * i / int(self.__width / 2)
+      distance, color, x_texture = self.cast_ray(direction)
       x = int((self.__width / 2)) + i
-      h = (self.__height / ((distance * math.cos(a - self.player["direction"])) * (self.__height / 10)))
+      h = (self.__height / ((distance * math.cos(direction - self.player["direction"])) * (self.__height / 10)))
+
+      # Dibujo de una línea si la distancia es menor al valor del z-buffer.
       if (self.__z_buffer[i] >= distance):
-        self.draw_stake(x, h, color, tx)
+        self.draw_stake(x, h, color, x_texture)
         self.__z_buffer[i] = distance
 
-    # for enemy in enemies:
-    #   self.point(enemy["x"], enemy["y"], (255, 0, 0))
+    # Dibujo de los enemigos en el minimapa.
+    for enemy in enemies:
+      self.point(enemy["x"], enemy["y"], (255, 0, 0))
 
+    # Dibujo de los enemigos en el juego.
     for enemy in enemies:
       self.draw_sprite(enemy)
 
@@ -198,9 +208,9 @@ running = True
 
 while (running):
 
-  screen.fill(BLACK, (0, 0, raycaster.get_width() / 2, raycaster.get_height()))
-  screen.fill(SKY, (raycaster.get_width() / 2, 0, raycaster.get_width(), raycaster.get_height() / 2))
-  screen.fill(GROUND, (raycaster.get_width() / 2, raycaster.get_height() / 2, raycaster.get_width(), raycaster.get_height() / 2))
+  screen.fill(colors.BLACK, (0, 0, raycaster.get_width() / 2, raycaster.get_height()))
+  screen.fill(colors.SKY, (raycaster.get_width() / 2, 0, raycaster.get_width(), raycaster.get_height() / 2))
+  screen.fill(colors.GROUND, (raycaster.get_width() / 2, raycaster.get_height() / 2, raycaster.get_width(), raycaster.get_height() / 2))
 
   raycaster.render()
   raycaster.clear_z_buffer()
