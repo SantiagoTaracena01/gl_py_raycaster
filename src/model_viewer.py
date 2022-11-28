@@ -11,8 +11,10 @@ import random
 import pygame
 import numpy
 import ctypes
+import shaders
 from OpenGL.GL import *
 from OpenGL.GL.shaders import *
+from obj import Obj
 
 # Ancho y alto de la ventana creada por pygame.
 WIDTH = 800
@@ -28,42 +30,16 @@ pygame.init()
 # Pantalla de pygame.
 screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.OPENGL | pygame.DOUBLEBUF)
 
-# Código del vertex shader del visor.
-vertex_shader = """
-#version 460
-layout (location = 0) in vec3 position;
-layout (location = 1) in vec3 vertexColor;
-uniform mat4 myMatrix;
-out vec3 ourColor;
-void main() {
-  gl_Position = myMatrix * vec4(position, 1.0f);
-  ourColor = vertexColor;
-}
-"""
-
-# Código del fragment shader del visor.
-fragment_shader = """
-#version 460
-layout (location = 0) out vec4 fragColor;
-uniform vec3 color;
-in vec3 ourColor;
-void main() {
-  fragColor = vec4(color, 1.0f);
-}
-"""
-
 # Proceso de compilación y uso de los shaders.
-compiled_vertex_shader = compileShader(vertex_shader, GL_VERTEX_SHADER)
-compiled_fragment_shader = compileShader(fragment_shader, GL_FRAGMENT_SHADER)
+compiled_vertex_shader = compileShader(shaders.vertex_shader, GL_VERTEX_SHADER)
+compiled_fragment_shader = compileShader(shaders.another_shader, GL_FRAGMENT_SHADER)
 shader = compileProgram(compiled_vertex_shader, compiled_fragment_shader)
 glUseProgram(shader)
+glEnable(GL_DEPTH_TEST)
 
-# Array de vértices a dibujar por el visor.
-vertex_data = numpy.array([
-  -0.5, -0.5, 0.0,
-  0.5, -0.5, 0.0,
-  0.0, 0.5, 0.0,
-], dtype=numpy.float32)
+# Array de vértices del modelo a dibujar por el visor.
+model = Obj("./models/model.obj")
+vertex_data = numpy.array(model.vertices, dtype=numpy.float32)
 
 # Creación del vertex buffer object.
 vertex_buffer_object = glGenBuffers(1)
@@ -73,7 +49,7 @@ glBufferData(GL_ARRAY_BUFFER, vertex_data.nbytes, vertex_data, GL_STATIC_DRAW)
 # Creación del vertex array object.
 vertex_array_object = glGenVertexArrays(1)
 glBindVertexArray(vertex_array_object)
-glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, (SLOTS * BYTES), ctypes.c_void_p(0))
+glVertexAttribPointer(0, SLOTS, GL_FLOAT, GL_FALSE, (SLOTS * BYTES), ctypes.c_void_p(0))
 glEnableVertexAttribArray(0)
 
 # Función para recalcular la matrix de transformación del visor.
@@ -88,13 +64,15 @@ def recalculate_transformation_matrix(angle):
 
   # Matrices de vista, proyección y viewport del visor.
   view = glm.lookAt(glm.vec3(0, 0, 5), glm.vec3(0, 0, 0), glm.vec3(0, 1, 0))
-  projection = glm.perspective(glm.radians(45), (4 / 3), 0.1, 1000.0)
+  projection = glm.perspective(glm.radians(45), (WIDTH / HEIGHT), 0.1, 1000.0)
   glViewport(0, 0, WIDTH, HEIGHT)
 
   # Matriz de transformación final y almacenamiento de la misma.
   my_matrix = (projection * view * model)
   my_matrix_location = glGetUniformLocation(shader, "myMatrix")
   glUniformMatrix4fv(my_matrix_location, 1, GL_FALSE, glm.value_ptr(my_matrix))
+
+glViewport(0, 0, WIDTH, HEIGHT)
 
 # Color del fondo de pantalla.
 glClearColor(0.0, 0.0, 0.0, 1.0)
@@ -107,7 +85,7 @@ degrees = 0
 while (running):
 
   # Limpieza del color buffer bit.
-  glClear(GL_COLOR_BUFFER_BIT)
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
   # Colores aleatorios del modelo a visualizar.
   first_color = random.random()
@@ -126,7 +104,7 @@ while (running):
   pygame.time.wait(100)
 
   # Dibujo de los triángulos del vertex buffer object.
-  glDrawArrays(GL_TRIANGLES, 0, 3)
+  glDrawArrays(GL_TRIANGLES, 0, len(vertex_data))
 
   # Flip de pygame para actualizar la pantalla.
   pygame.display.flip()

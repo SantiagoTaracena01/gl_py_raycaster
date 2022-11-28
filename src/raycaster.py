@@ -19,8 +19,8 @@ wall5 = pygame.image.load("./textures/wall5.png")
 # Cambiar a object
 walls = [wall1, wall2, wall3, wall4, wall5]
 
-sprite1 = pygame.image.load("./textures/sprite1.png")
-sprite2 = pygame.image.load("./textures/sprite2.png")
+sprite1 = pygame.image.load("./sprites/sprite1.png")
+sprite2 = pygame.image.load("./sprites/sprite2.png")
 
 enemies = [{ "x": 80, "y": 80, "sprite": sprite1 }, { "x": 300, "y": 300, "sprite": sprite2 }]
 
@@ -33,13 +33,13 @@ class Raycaster(object):
     _, _, self.__width, self.__height = self.__screen.get_rect()
     self.__blocksize = 50
     self.__map = []
-    self.clear_z_buffer()
     self.player = {
-      "x": int(((3 / 2) * self.__blocksize)),
-      "y": int(((3 / 2) * self.__blocksize)),
-      "field_of_view": round((math.pi / 3)),
-      "direction": round((math.pi / 3)),
+      "x": int(((1.5) * self.__blocksize)),
+      "y": int(((1.5) * self.__blocksize)),
+      "field_of_view": int((math.pi / 3)),
+      "direction": int((math.pi / 3)),
     }
+    self.clear_z_buffer()
 
   # Funciones para obtener el ancho y alto del raycaster.
   get_width = lambda self: self.__width
@@ -47,11 +47,11 @@ class Raycaster(object):
 
   # Función para limpiar el z_buffer del raycaster.
   def clear_z_buffer(self):
-    self.__z_buffer = [999_999 for _ in range(0, self.__width)]
+    self.__z_buffer = [999_999 for _ in range(0, int(self.__width / 2))]
 
   # Función para colocar un punto en la pantalla.
   def point(self, x, y, color=colors.WHITE):
-    self.__screen.set_at((x, y), color)
+    self.__screen.set_at((int(x), int(y)), color)
 
   # Función que dibuja un bloque en la pantalla.
   def block(self, x, y, wall):
@@ -79,23 +79,23 @@ class Raycaster(object):
     # Puntos a lo largo de toda la altura calculada.
     for y in range(start_y, end_y):
       y_texture = int((((y - start_y) * 128) / height))
-      c = walls[(int(color) - 1)].get_at((x_texture, y_texture))
-      self.point(x, y, c)
+      texture_color = walls[(int(color) - 1)].get_at((x_texture, y_texture))
+      self.point(x, y, texture_color)
 
   # Función para lanzar un rayo en dirección del jugador.
   def cast_ray(self, a):
 
     # Constantes importantes para el lanzamiento del rayo.
     distance = 0
-    ox = self.player["x"]
-    oy = self.player["y"]
+    x_origin = self.player["x"]
+    y_origin = self.player["y"]
 
     # Ciclo que simula el lanzamiento del rayo.
     while (True):
 
       # Coordenadas de visión x e y.
-      x = int((ox + (distance * math.cos(a))))
-      y = int((oy + (distance * math.sin(a))))
+      x = int((x_origin + (distance * math.cos(a))))
+      y = int((y_origin + (distance * math.sin(a))))
 
       # Factores i y j del hit.
       i, j = int((x / self.__blocksize)), int((y / self.__blocksize))
@@ -117,7 +117,7 @@ class Raycaster(object):
         return distance, self.__map[j][i], x_texture
 
       # Dibujo de un nuevo punto y aumento de la distancia.
-      self.point(x, y)
+      #self.point(x, y)
       distance += 1
 
   # Función que dibuja el mapa en la parte izquierda de la pantalla.
@@ -165,6 +165,7 @@ class Raycaster(object):
     # Funciones para renderizar los componentes de la ventana.
     self.draw_map()
     self.draw_player()
+    self.clear_z_buffer()
     density = 100
 
     # Dibujo del minimapa del juego.
@@ -175,7 +176,7 @@ class Raycaster(object):
     # Línea divisoria entre el minimapa y el juego.
     for y in range(500):
       for x in (499, 500, 501):
-        self.point(x, y)
+        self.point(x, y, color=colors.BLACK)
 
     # Dibujo del mapa en 3D del juego.
     for i in range(0, int(self.__width / 2)):
@@ -220,15 +221,15 @@ while (running):
     if (event.type == pygame.QUIT):
       running = False
     elif (event.type == pygame.KEYDOWN):
-      if (event.key == pygame.K_a):
-        raycaster.player["direction"] += math.pi / 25
       if (event.key == pygame.K_d):
+        raycaster.player["direction"] += math.pi / 25
+      if (event.key == pygame.K_a):
         raycaster.player["direction"] -= math.pi / 25
       if (event.key == pygame.K_RIGHT):
         raycaster.player["x"] += 10
       if (event.key == pygame.K_LEFT):
         raycaster.player["x"] -= 10
-      if (event.key == pygame.K_UP):
-        raycaster.player["y"] += 10
       if (event.key == pygame.K_DOWN):
+        raycaster.player["y"] += 10
+      if (event.key == pygame.K_UP):
         raycaster.player["y"] -= 10
