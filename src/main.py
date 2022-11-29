@@ -23,18 +23,29 @@ wall4 = pygame.image.load("./walls/hyrule_castle_deco.png")
 wall5 = pygame.image.load("./walls/hyrule_castle_curtain.png")
 
 # Sprites cargados para el proyecto.
-sprite1 = pygame.image.load("./sprites/sprite1.png")
-sprite2 = pygame.image.load("./sprites/sprite2.png")
+zelda = pygame.image.load("./sprites/zelda.png")
+elder = pygame.image.load("./sprites/elder.png")
+lady = pygame.image.load("./sprites/lady.png")
+trader = pygame.image.load("./sprites/trader.png")
+kid = pygame.image.load("./sprites/kid.png")
+woman = pygame.image.load("./sprites/woman.png")
 
 # Muros y enemigos del proyecto.
 walls = { "1": wall1, "2": wall2, "3": wall3, "4": wall4, "5": wall5 }
-enemies = [{ "x": 220, "y": 425, "sprite": sprite1 }, { "x": 320, "y": 420, "sprite": sprite2 }]
+sprites = [
+  { "x": 220, "y": 425, "sprite": zelda },
+  { "x": 320, "y": 420, "sprite": elder },
+  { "x": 100, "y": 300, "sprite": lady },
+  { "x": 450, "y": 225, "sprite": trader },
+  { "x": 200, "y": 100, "sprite": kid },
+  { "x": 400, "y": 100, "sprite": woman },
+]
 
 # Incialización de variables de pygame y el raycaster.
 pygame.init()
 pygame_clock = pygame.time.Clock()
 screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.DOUBLEBUF | pygame.HWACCEL)
-raycaster = Raycaster(screen, walls, enemies)
+raycaster = Raycaster(screen, walls, sprites)
 raycaster.load_map("./maps/map.txt")
 
 # Música de fondo para el juego.

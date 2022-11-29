@@ -19,7 +19,7 @@ class Raycaster(object):
     self.__blocksize = 50
     self.__map = []
     self.__walls = walls
-    self.__enemies = enemies
+    self.__sprites = enemies
     self.clear_z_buffer()
     self.__player = {
       "x": int((1.5 * self.__blocksize)),
@@ -136,11 +136,11 @@ class Raycaster(object):
     # Dirección, distancia y tamaño del sprite.
     sprite_a = math.atan2((sprite["y"] - self.__player["y"]), (sprite["x"] - self.__player["x"]))
     sprite_distance = ((((self.__player["x"] - sprite["x"]) ** 2) + ((self.__player["y"] - sprite["y"]) ** 2)) ** 0.5)
-    sprite_size = int(((500 / sprite_distance) * 70))
+    sprite_size = int(((500 / sprite_distance) * 75))
 
     # Coordenadas x e y del sprite.
-    sprite_x = int((500 + (sprite_a - self.__player["direction"]) * 500 / self.__player["field_of_view"] + 250 - sprite_size / 2))
-    sprite_y = int((250 - (sprite_size / 2)))
+    sprite_x = int(((self.__width / 2) + (sprite_a - self.__player["direction"]) * self.__height / self.__player["field_of_view"] + 250 - sprite_size / 2))
+    sprite_y = int(((self.__height / 2) - (sprite_size / 2)))
 
     # Iteración para dibujar los sprites en la pantalla.
     for x in range(sprite_x, (sprite_x + sprite_size)):
@@ -188,6 +188,6 @@ class Raycaster(object):
       self.__z_buffer[i] = distance
 
     # Dibujo de los enemigos en el juego.
-    for enemy in self.__enemies:
-      self.point(enemy["x"], enemy["y"], colors.BLACK)
-      self.draw_sprite(enemy)
+    for sprite in self.__sprites:
+      self.point(sprite["x"], sprite["y"], colors.BLACK)
+      self.draw_sprite(sprite)
