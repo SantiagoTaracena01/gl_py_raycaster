@@ -40,6 +40,9 @@ raycaster.load_map('./maps/map.txt')
 pygame.mixer.music.load("./music/overworld.wav")
 pygame.mixer.music.play(-1)
 
+# Efecto de sonido para los pasos en el juego.
+step = pygame.mixer.Sound("./music/step.wav")
+
 # Variable que determina si el juego está corriendo o no.
 running = True
 
@@ -59,6 +62,7 @@ while (running):
     if (event.type == pygame.QUIT):
       running = False
     if event.type == pygame.KEYDOWN:
+      pygame.mixer.Sound.play(step)
       if event.key == pygame.K_a:
         raycaster.rotate_player(((-1 * math.pi) / 20))
       elif event.key == pygame.K_d:
