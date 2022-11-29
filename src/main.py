@@ -32,9 +32,10 @@ enemies = [{ "x": 220, "y": 425, "sprite": sprite1 }, { "x": 320, "y": 420, "spr
 
 # Incialización de variables de pygame y el raycaster.
 pygame.init()
+pygame_clock = pygame.time.Clock()
 screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.DOUBLEBUF | pygame.HWACCEL)
 raycaster = Raycaster(screen, walls, enemies)
-raycaster.load_map('./maps/map.txt')
+raycaster.load_map("./maps/map.txt")
 
 # Música de fondo para el juego.
 pygame.mixer.music.load("./music/overworld.wav")
@@ -52,6 +53,14 @@ while (running):
   # Suelo y techo del mapa del juego.
   screen.fill(colors.SKY, (raycaster.get_width() / 2, 0, raycaster.get_width(), raycaster.get_height() / 2))
   screen.fill(colors.GROUND, (raycaster.get_width() / 2, raycaster.get_height() / 2, raycaster.get_width(), raycaster.get_height() / 2))
+
+  # Contador de FPS del juego.
+  fps_font = pygame.font.Font("./fonts/mononoki.ttf", 16)
+  fps_span = fps_font.render(f"{round(pygame_clock.get_fps(), 2)} FPS", True, colors.WHITE, colors.BLACK)
+  fps_span_rect = fps_span.get_rect()
+  fps_span_rect.center = (950, 25)
+  screen.blit(fps_span, fps_span_rect)
+  pygame_clock.tick()
 
   # Renderización de un frame del juego y flip de la pantalla.
   raycaster.render()

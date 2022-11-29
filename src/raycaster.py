@@ -22,21 +22,24 @@ class Raycaster(object):
     self.__enemies = enemies
     self.clear_z_buffer()
     self.__player = {
-      "x": int(1.5 * self.__blocksize),
-      "y": int(1.5 * self.__blocksize),
-      "direction": int(math.pi / 3),
-      "field_of_view": int(math.pi / 3),
+      "x": int((1.5 * self.__blocksize)),
+      "y": int((1.5 * self.__blocksize)),
+      "direction": int((math.pi / 2)),
+      "field_of_view": int((math.pi / 3)),
     }
 
   # Funciones para obtener el ancho y alto del raycaster.
   get_width = lambda self: self.__width
   get_height = lambda self: self.__height
 
+  # Función para rotar la vista del jugador.
   def rotate_player(self, degrees):
     self.__player["direction"] += degrees
 
+  # Función para mover al jugador.
   def move_player(self, axis, steps):
-    self.__player[axis] += steps
+    if ((axis == "x") or (axis == "y")):
+      self.__player[axis] += steps
 
   # Función para limpiar el z_buffer del raycaster.
   def clear_z_buffer(self):
