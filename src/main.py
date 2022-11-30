@@ -98,7 +98,7 @@ while (running):
   # Eventos del juego activados con el teclado.
   for event in pygame.event.get():
     if (event.type == pygame.QUIT):
-      running = False
+      exit(0)
     if event.type == pygame.KEYDOWN:
       pygame.mixer.Sound.play(step)
       if event.key == pygame.K_a:
@@ -113,3 +113,15 @@ while (running):
         raycaster.move_player("y", 10)
       elif event.key == pygame.K_DOWN:
         raycaster.move_player("y", -10)
+
+# Carga de la pantalla final del juego.
+player_has_finished = False
+end_screen = pygame.image.load("./screens/end_screen.png").convert()
+screen.blit(end_screen, (0, 0))
+pygame.display.flip()
+
+# Ciclo que mantiene la carga de la pantalla final del juego.
+while (not player_has_finished):
+  for event in pygame.event.get():
+    if (event.type == pygame.QUIT):
+      player_has_finished = True
