@@ -37,8 +37,8 @@ sprites = [
   { "x": 400, "y": 425, "sprite": zelda },
   { "x": 100, "y": 300, "sprite": lady },
   { "x": 400, "y": 225, "sprite": trader },
-  { "x": 200, "y": 100, "sprite": elder },
-  { "x": 400, "y": 100, "sprite": woman },
+  { "x": 200, "y": 80, "sprite": elder },
+  { "x": 400, "y": 80, "sprite": woman },
 ]
 
 # Incialización de variables de pygame y el raycaster.
@@ -46,7 +46,7 @@ pygame.init()
 pygame_clock = pygame.time.Clock()
 screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.DOUBLEBUF | pygame.HWACCEL)
 raycaster = Raycaster(screen, walls, sprites)
-raycaster.load_map("./maps/map.txt")
+selected_level = "./maps/map.txt"
 
 # Música de fondo para el juego.
 pygame.mixer.music.load("./music/overworld.wav")
@@ -67,7 +67,14 @@ while (not player_has_started):
     if (event.type == pygame.QUIT):
       exit(0)
     if (event.type == pygame.KEYDOWN):
-      if (event.key == pygame.K_SPACE):
+      if (event.key == pygame.K_z):
+        selected_level = "./maps/map.txt"
+        player_has_started = True
+      if (event.key == pygame.K_x):
+        selected_level = "./maps/level_2.txt"
+        player_has_started = True
+      if (event.key == pygame.K_c):
+        selected_level = "./maps/level_3.txt"
         player_has_started = True
 
 # Carga de las instrucciones del juego.
@@ -87,6 +94,7 @@ while (not player_has_read_instructions):
 
 # Variable que determina si el juego está corriendo o no.
 running = True
+raycaster.load_map(selected_level)
 
 # Ciclo infinito que hace que el juego corra.
 while (running):
