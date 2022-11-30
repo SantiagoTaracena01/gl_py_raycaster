@@ -99,19 +99,19 @@ while (running):
   for event in pygame.event.get():
     if (event.type == pygame.QUIT):
       exit(0)
-    if event.type == pygame.KEYDOWN:
+    if (event.type == pygame.KEYDOWN):
       pygame.mixer.Sound.play(step)
-      if event.key == pygame.K_a:
+      if (event.key == pygame.K_a):
         raycaster.rotate_player(((-1 * math.pi) / 20))
-      elif event.key == pygame.K_d:
+      elif (event.key == pygame.K_d):
         raycaster.rotate_player((math.pi / 20))
-      elif event.key == pygame.K_RIGHT:
+      elif (event.key == pygame.K_RIGHT):
         raycaster.move_player("x", 10)
-      elif event.key == pygame.K_LEFT:
+      elif (event.key == pygame.K_LEFT):
         raycaster.move_player("x", -10)
-      elif event.key == pygame.K_UP:
+      elif (event.key == pygame.K_UP):
         raycaster.move_player("y", 10)
-      elif event.key == pygame.K_DOWN:
+      elif (event.key == pygame.K_DOWN):
         raycaster.move_player("y", -10)
 
 # Carga de la pantalla final del juego.

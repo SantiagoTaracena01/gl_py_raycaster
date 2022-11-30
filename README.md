@@ -3,8 +3,8 @@
 ### Introducción
 
 El presente proyecto es un videojuego de exploración basado en el castillo de Hyrule de The Legend of Zelda: A Link to
-the Past. Este videojuego consiste en un raycaster desarrollado en Python con el apoyo de la librería Pygame, y cuenta
-con algunas de las siguientes características.
+the Past. Zelda se ha perdido en el castillo, y un héroe debe encontrarla para ganar el juego. Este videojuego consiste
+en un raycaster desarrollado en Python con el apoyo de la librería Pygame, y cuenta con algunas de las siguientes características.
 
 - [x] Carga de sprites y texturas.
 - [x] Dibujo de un minimapa del lado izquierdo del juego.
