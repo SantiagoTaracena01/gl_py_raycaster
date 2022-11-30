@@ -201,4 +201,4 @@ class Raycaster(object):
 
   # Función que comprueba si el jugador ha ganado.
   def player_has_won(self):
-    return ((350 < self.__player["x"] < 400) and (400 < self.__player["y"] < 450))
+    return ((300 < self.__player["x"] < 400) and (400 < self.__player["y"] < 450))
