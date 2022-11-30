@@ -70,6 +70,21 @@ while (not player_has_started):
       if (event.key == pygame.K_SPACE):
         player_has_started = True
 
+# Carga de las instrucciones del juego.
+player_has_read_instructions = False
+instructions_screen = pygame.image.load("./screens/instructions_screen.png").convert()
+screen.blit(instructions_screen, (0, 0))
+pygame.display.flip()
+
+# Ciclo que mantiene la carga de la pantalla inicial del juego.
+while (not player_has_read_instructions):
+  for event in pygame.event.get():
+    if (event.type == pygame.QUIT):
+      exit(0)
+    if (event.type == pygame.KEYDOWN):
+      if (event.key == pygame.K_SPACE):
+        player_has_read_instructions = True
+
 # Variable que determina si el juego está corriendo o no.
 running = True
 
