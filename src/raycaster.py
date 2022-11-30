@@ -162,6 +162,13 @@ class Raycaster(object):
             self.point(x, y, color)
             self.__z_buffer[index] = sprite_distance
 
+  # Función que dibuja los sprites en el mapa del juego.
+  def draw_sprite_in_map(self, x, y):
+    for i in (x, (x + 5)):
+      for j in (y, (y + 5)):
+        color = colors.SPRITE_BLUE
+        self.point(i, j, color)
+
   # Función para renderizar un frame del juego.
   def render(self):
 
@@ -189,5 +196,9 @@ class Raycaster(object):
 
     # Dibujo de los enemigos en el juego.
     for sprite in self.__sprites:
-      self.point(sprite["x"], sprite["y"], colors.BLACK)
+      self.draw_sprite_in_map(sprite["x"], sprite["y"])
       self.draw_sprite(sprite)
+
+  # Función que comprueba si el jugador ha ganado.
+  def player_has_won(self):
+    return ((350 < self.__player["x"] < 400) and (400 < self.__player["y"] < 450))

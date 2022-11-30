@@ -33,11 +33,11 @@ woman = pygame.image.load("./sprites/woman.png")
 # Muros y enemigos del proyecto.
 walls = { "1": wall1, "2": wall2, "3": wall3, "4": wall4, "5": wall5 }
 sprites = [
-  { "x": 220, "y": 425, "sprite": zelda },
-  { "x": 320, "y": 420, "sprite": elder },
+  { "x": 225, "y": 425, "sprite": kid },
+  { "x": 400, "y": 425, "sprite": zelda },
   { "x": 100, "y": 300, "sprite": lady },
-  { "x": 450, "y": 225, "sprite": trader },
-  { "x": 200, "y": 100, "sprite": kid },
+  { "x": 400, "y": 225, "sprite": trader },
+  { "x": 200, "y": 100, "sprite": elder },
   { "x": 400, "y": 100, "sprite": woman },
 ]
 
@@ -91,6 +91,9 @@ while (running):
   # Renderización de un frame del juego y flip de la pantalla.
   raycaster.render()
   pygame.display.flip()
+
+  # Función que verifica si el jugador ha ganado o no.
+  running = not raycaster.player_has_won()
 
   # Eventos del juego activados con el teclado.
   for event in pygame.event.get():
