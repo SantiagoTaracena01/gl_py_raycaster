@@ -55,6 +55,21 @@ pygame.mixer.music.play(-1)
 # Efecto de sonido para los pasos en el juego.
 step = pygame.mixer.Sound("./music/step.wav")
 
+# Carga de la pantalla inicial del juego.
+player_has_started = False
+start_screen = pygame.image.load("./screens/start_screen.png").convert()
+screen.blit(start_screen, (0, 0))
+pygame.display.flip()
+
+# Ciclo que mantiene la carga de la pantalla inicial del juego.
+while (not player_has_started):
+  for event in pygame.event.get():
+    if (event.type == pygame.QUIT):
+      exit(0)
+    if (event.type == pygame.KEYDOWN):
+      if (event.key == pygame.K_SPACE):
+        player_has_started = True
+
 # Variable que determina si el juego está corriendo o no.
 running = True
 
